@@ -1,17 +1,20 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MainPageComponent } from './pages/main-pages.component';
+import { ListComponent } from './components/list/list.component';
 
 
 
 @NgModule({
   declarations: [
-    DbzModule
+    MainPageComponent,
+    ListComponent
+  ],
+  exports: [
+    MainPageComponent
   ],
   imports: [
     CommonModule
-  ],
-  exports: [
-    DbzModule
   ]
 })
 export class DbzModule { }

@@ -14,8 +14,7 @@ import { DbzModule } from './dbz/dbz.module';
   declarations: [
     AppComponent,
     CounterComponent,
-    ListComponent,
-    MainPageComponent
+    ListComponent
   ],
   imports: [
     BrowserModule,
