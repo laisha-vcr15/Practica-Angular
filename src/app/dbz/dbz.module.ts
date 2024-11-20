@@ -13,7 +13,7 @@ import { AddComponent } from './components/add/add.component';
     AddComponent
   ],
   exports: [
-    MainPageComponent
+    MainPageComponent,
   ],
   imports: [
     CommonModule
