@@ -1,0 +1,195 @@
+<header class="pt-2">
+    <div class="inner-header container">
+        <div class="content-header">
+            <div>
+                <div>
+                  <span class="texto-header" >
+                    SIASC <span class="texto-header-complemento"> | Sistema Informático para la Atención, Seguimiento y Cobro</span>
+                  </span>
+                </div>
+                @if(usuarioSesion$ | async; as usuario) {
+                   <!-- COMBO PARA ESTATAL APROBACIONES ESTATAL E INST ESTATAL -->
+                @if (tipoValidacion == 'Aprobaciones' && usuario.roles?.[0]?.idRol != ROL.IMSS_Central ) {
+                  <div>
+                    <mat-form-field class="combo">
+                      <mat-select [(ngModel)]="indInternoExterno" name="indInternoExterno"
+                      panelClass="bg-panel" (selectionChange)="valorSesion()">
+                        @for (autorizacion of comboOptions; track autorizacion) {
+                          <mat-option [value]="autorizacion.key">
+                            @if (autorizacion.key == 1) {
+                              <img src="./../../../../../assets/images/consultaRegistro/internos_icono.svg" alt="">
+                            }
+                            @if (autorizacion.key == 2) {
+                              <img src="./../../../../../assets/images/consultaRegistro/externos_icono.svg" alt="">
+                            }
+                            {{autorizacion.value}}
+                          </mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                }
+
+
+
+        <!-- COMBO PARA SWITCH ENTRE PANTALLAS DE REGISTRAR ATENCIÓN Y CONSULTAR REGISTROS RECHAZADOS -->
+        @if (false) {
+        <!-- @if (usuario.roles?.[0]?.idRol == ROL.Registro) { -->
+        <div>
+          <mat-form-field class="combo">
+            <mat-select [(ngModel)]="tipoSeguimiento" name="tipoSeguimiento" panelClass="bg-panel"
+              (selectionChange)="routerNav()">
+              @for (autorizacion of comboOptions; track autorizacion) {
+              <mat-option [value]="autorizacion.key">
+                @if (autorizacion.key == 5) {
+                <img src="./../../../../../assets/images/atencion/NuevoRegistro.svg" alt="">
+                }
+                @if (autorizacion.key == 6) {
+                <img src="./../../../../../assets/images/atencion/registrosRechazados.svg" alt="">
+                }
+                {{autorizacion.value}}
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        }
+        }
+      </div>
+
+      @if(usuarioSesion$ | async; as usuario) {
+      <div class="div-menu">
+        <div class="div-menu">
+          <div>
+            <p-avatar [label]="getInicialesUsuario(usuario)" shape="circle" size="xlarge"></p-avatar>
+          </div>
+          <div class="flex flex-column px-4 py-1">
+            <span class="username">{{ usuario.nombre + ' ' + usuario.apellidoPaterno + ' ' + (usuario.apellidoMaterno ?
+              usuario.apellidoMaterno : '') }}</span>
+            @switch (usuario.roles?.[0]?.idRol) {
+            <!-- Registro -->
+            @case (ROL.Registro) {
+            <span class="username">{{ 'Unidad médica: ' }} {{ usuario.roles?.[0]?.nomEntidad | nullToEmpty }} <span
+                *ngIf="usuario.roles?.[0]?.nomClues">-</span> {{ usuario.roles?.[0]?.nomClues | nullToEmpty }}</span>
+            }
+            <!-- Estatal -->
+            @case (ROL.IMSS_BIENESTAR_Estatal) {
+            <span class="username">{{ (usuario.roles?.[0]?.desRol | nullToEmpty) + ' ' + (usuario.roles?.[0]?.nomEntidad
+              | nullToEmpty) }}</span>
+            }
+            @case (ROL.IMSS_Estatal) {
+            <span class="username">{{ (usuario.roles?.[0]?.desRol | nullToEmpty) + ' ' + (usuario.roles?.[0]?.nomEntidad
+              | nullToEmpty) }}</span>
+            }
+            <!-- Central -->
+            @case (ROL.IMSS_Central) {
+            <span class="username">{{ (usuario.roles?.[0]?.desRol | nullToEmpty) }}</span>
+            }
+            @case (ROL.BIENESTAR_Central) {
+            <span class="username">{{ (usuario.roles?.[0]?.desRol | nullToEmpty) }}</span>
+            }
+            @default {
+            <span class="username">{{ 'Unidad médica: ' }} {{ (usuario.roles?.[0]?.nomEntidad | nullToEmpty) }} <span
+                *ngIf="usuario.roles?.[0]?.nomClues">-</span> {{ usuario.roles?.[0]?.nomClues | nullToEmpty }}</span>
+            }
+            }
+          </div>
+        </div>
+        <div>
+
+          @if (usuarioSesion$ | async; as usuario) {
+          <button pButton class="p-button-rounded menu-burger" [matMenuTriggerFor]="menu">
+            <i class="pi pi-bars icon-size"></i>
+          </button>
+
+          <mat-menu #menu="matMenu">
+            @switch (usuario.roles?.[0]?.idRol) {
+
+            @case ( ROL.IMSS_Estatal) {
+            <button mat-menu-item class="menu-item sellect-item" (click)="cerrar()" >
+              <i class="pi pi-sign-in icon-size"></i>
+              <span> Cerrar sesión</span>
+            </button>
+
+            }
+            @case (ROL.IMSS_BIENESTAR_Estatal ) {
+            <button mat-menu-item class="menu-item sellect-item" (click)="cerrar()" style="background: rgba(137, 137, 237, 0.073);">
+              <i class="pi pi-sign-in icon-size"></i>
+              <span> Cerrar sesión</span>
+            </button>
+
+            }
+
+            @case (ROL.IMSS_Central ) {
+              <button mat-menu-item class="menu-item sellect-item"
+              [class.disabled]="rutaActual(RUTA.PRIVADO.APROBACION_FOLIOS_CENTRAL)"
+              (click)="redireccionamiento('folios')">
+              <img id="aprobacion" src="./../../../../../assets/images/icons/aprobacion_folios.svg" class="icon-size" alt="">
+              <span> Aprobación de Folios</span>
+            </button>
+            <button mat-menu-item class="menu-item sellect-item"
+            [class.disabled]="rutaActual(RUTA.PRIVADO.FACTURACION_RIMN)" 
+            (click)="redireccionamiento('reportes')">
+            <img src="./../../../../../assets/images/icons/reportes_rimn.svg" class="icon-size" alt="">
+              <span> Reportes RIMN</span>
+            </button>
+            <button mat-menu-item class="menu-item sellect-item" (click)="cerrar()" style="background: rgba(137, 137, 237, 0.073);">
+              <i class="pi pi-sign-in icon-size"></i>
+              <span> Cerrar sesión</span>
+            </button>
+
+            }
+            @case ( ROL.BIENESTAR_Central) {
+
+            <button mat-menu-item class="menu-item sellect-item"
+              [class.disabled]="rutaActual(RUTA.PRIVADO.APROBACION_FOLIOS_CENTRAL)"
+              (click)="redireccionamiento('folios')">
+              <img src="./../../../../../assets/images/icons/aprobacion_folios.svg" class="icon-size" alt="">
+              <span> Aprobación de Folios</span>
+            </button>
+            <button mat-menu-item class="menu-item sellect-item"
+            [class.disabled]="rutaActual(RUTA.PRIVADO.FACTURACION_RIMN)" 
+            (click)="redireccionamiento('reportes')">
+            <img src="./../../../../../assets/images/icons/reportes_rimn.svg" class="icon-size" alt="">
+              <span> Reportes RIMN</span>
+            </button>
+            <button mat-menu-item class="menu-item sellect-item" (click)="cerrar()" style="background: rgba(137, 137, 237, 0.073);">
+              <i class="pi pi-sign-in icon-size"></i>
+              <span> Cerrar sesión</span>
+            </button>
+
+            }
+            @case (ROL.Registro) {
+            <button mat-menu-item class="menu-item sellect-item"
+              [class.disabled]="rutaActual(RUTA.PRIVADO.REGISTRO_CURP)" (click)="redireccionamiento('vigencia')">
+              <img src="./../../../../../assets/images/icons/vigencia.svg" class="icon-size" alt="">
+
+              <span> Consulta de vigencia</span>
+            </button>
+            <button mat-menu-item class="menu-item sellect-item"
+              [class.disabled]="rutaActual(RUTA.PRIVADO.CONSULTA_RECHAZOS)" (click)="redireccionamiento('rechazadas')">
+              <img src="./../../../../../assets/images/icons/registros_rechazados.svg" class="icon-size" alt="">
+              <span>  Atenciones rechazadas</span>
+            </button>
+            <button mat-menu-item class="menu-item sellect-item" (click)="cerrar()" style="background: rgba(137, 137, 237, 0.073);">
+              <i class="pi pi-sign-in icon-size"></i>
+              <span> Cerrar sesión</span>
+            </button>
+
+            }
+            }
+          </mat-menu>
+          }
+
+
+
+
+        </div>
+      </div>
+      }
+
+
+    </div>
+  </div>
+</header>
+<!-- <app-subheader-superior></app-subheader-superior> -->
