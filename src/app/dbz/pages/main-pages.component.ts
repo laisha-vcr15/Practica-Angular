@@ -13,4 +13,8 @@ export class MainPageComponent {
         { name: 'Azula', power: 24 },
         { name: 'Aang', power: 10 }
       ];
+
+      onNewCharacter(character: Character):void{
+        this.characters.push(character);
+      }
 }
