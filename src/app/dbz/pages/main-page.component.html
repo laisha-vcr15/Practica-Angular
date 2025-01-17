@@ -4,7 +4,7 @@
 
 <div class="row">
     <div class="col">
-        <app-dbz-list [characterList]="characters"  (propagar)="onDeleteChar($event)"></app-dbz-list>
+        <app-dbz-list [characterList]="dbzService.characters"  (propagar)="dbzService.onDeleteChar($event)"></app-dbz-list>
 
        
     </div>
@@ -12,7 +12,7 @@
     <div class="col">
 
         
-        <dbz-add (onNewCharacter)="onNewCharacter($event)"></dbz-add>
+        <dbz-add (onNewCharacter)="dbzService.onNewCharacter($event)"></dbz-add>
 
     </div>
   
